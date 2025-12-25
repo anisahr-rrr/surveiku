@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Survei</title>
+<title>Survei Mood</title>
 
 <style>
 body {
@@ -13,10 +13,8 @@ body {
     justify-content: center;
     align-items: center;
 }
-.rating { font-size: 18px; margin: 8px 0; }
-.rating input { margin-right: 5px; }
 .box {
-    background: #fdfefe;
+    background: #fff;
     padding: 25px;
     border-radius: 14px;
     width: 100%;
@@ -31,7 +29,7 @@ input, select, textarea {
     border-radius: 6px;
     border: 1px solid #ccc;
 }
-textarea { resize: none; }
+.rating { margin: 8px 0; }
 button {
     width: 100%;
     margin-top: 18px;
@@ -46,14 +44,12 @@ button {
 button:hover { background: #4a7fc5; }
 #hasil {
     display: none;
-    margin-top: 18px;
+    margin-top: 15px;
     background: #f1f7fb;
-    padding: 14px;
-    border-radius: 10px;
-    line-height: 1.6;
+    padding: 12px;
+    border-radius: 8px;
     font-weight: bold;
 }
-.admin-btn { background: #607d8b; }
 table {
     display: none;
     width: 100%;
@@ -62,24 +58,4 @@ table {
     font-size: 13px;
 }
 th, td {
-    border: 1px solid #ccc;
-    padding: 6px;
-    text-align: center;
-}
-th { background: #eeeeee; }
-</style>
-</head>
-
-<body>
-
-<div class="box">
-    <h2 style="text-align:center;">📝 Survei Mood</h2>
-
-    <label>Nama kamu siapa?</label>
-    <input type="text" id="nama">
-
-    <label>Mood kamu hari ini?</label>
-    <div class="rating">
-        <input type="radio" name="mood" value="1"> ⭐
-        <input type="radio" name="mood" value="2"> ⭐⭐
-        <inpu
+    border: 1px soli
