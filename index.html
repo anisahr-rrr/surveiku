@@ -164,8 +164,23 @@ function kirim() {
   fd.append("butuh", butuh);
   fd.append("curhat", curhat);
 
-  fetch(SCRIPT_URL, { method:"POST", body:fd })
-    .catch(() => alert("❌ Gagal kirim"));
+  fetch(SCRIPT_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    nama: nama,
+    mood: mood,
+    capek: capek,
+    butuh: butuh,
+    curhat: curhat
+    })
+  })
+  .then(response => response.text())
+.then(text => {
+  if(text !== "OK") alert("❌ Gagal kirim");
+})
+.catch(() => alert("❌ Gagal kirim"));
+
 
   // --- simpan lokal untuk admin ---
   data.push({ nama, mood, capek, butuh, curhat });
@@ -198,3 +213,4 @@ function bukaAdmin() {
 
 </body>
 </html>
+
