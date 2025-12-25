@@ -169,9 +169,19 @@ th {
 </div>
 
 <script>
-let data = JSON.parse(localStorage.getItem("surveiLucu")) || [];
+let data = JSON.parse(localStorage.getItem("survei")) || [];
 
 function kirim() {
+    fetch("https://script.google.com/macros/s/AKfycbytksPqs30TK6ltChrLbSVaaxxokKy9SBuRtcZB0kNGNVR5RkZkq6XDBuELFB8MWwuUYw/exec", {
+  method: "POST",
+  body: JSON.stringify({
+    nama: nama,
+    mood: mood,
+    capek: capek,
+    butuh: butuh,
+    curhat: curhat
+  })
+});
     let nama = document.getElementById("nama").value;
     let mood = document.querySelector('input[name="mood"]:checked').value;
     let capek = document.getElementById("capek").value;
@@ -184,7 +194,7 @@ function kirim() {
     }
 
     data.push({ nama, mood, capek, butuh, curhat });
-    localStorage.setItem("surveiLucu", JSON.stringify(data));
+    localStorage.setItem("survei", JSON.stringify(data));
 
     const pembuka = [
         "Terima kasih sudah jujur hari ini 💙",
@@ -259,5 +269,6 @@ function bukaAdmin() {
 
 </body>
 </html>
+
 
 
