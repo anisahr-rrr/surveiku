@@ -2,196 +2,31 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Survei Mood</title>
+<title>Tes Survei</title>
 
 <style>
 body {
-    font-family: "Segoe UI", Tahoma, sans-serif;
-    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  font-family: Arial, sans-serif;
 }
 .box {
-    background: #fff;
-    padding: 25px;
-    border-radius: 14px;
-    width: 100%;
-    max-width: 480px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.2);
 }
-label { display: block; margin-top: 12px; font-weight: 600; }
-input, select, textarea {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-.rating { margin: 8px 0; }
-button {
-    width: 100%;
-    margin-top: 18px;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    background: #5c8fd6;
-    color: white;
-    font-size: 15px;
-    cursor: pointer;
-}
-button:hover { background: #4a7fc5; }
-#hasil {
-    display: none;
-    margin-top: 15px;
-    background: #f1f7fb;
-    padding: 12px;
-    border-radius: 8px;
-    font-weight: bold;
-}
-table {
-    display: none;
-    width: 100%;
-    margin-top: 15px;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-th, td {
-    border: 1px solid #ccc;
-    padding: 6px;
-    text-align: center;
-}
-th { background: #eee; }
-.admin-btn { background: #607d8b; }
 </style>
 </head>
 
 <body>
-
-<div class="box">
-    <h2 style="text-align:center;">📝 Survei Mood</h2>
-
-    <label>Nama</label>
-    <input type="text" id="nama">
-
-    <label>Mood hari ini</label>
-    <div class="rating">
-        <input type="radio" name="mood" value="1">⭐
-        <input type="radio" name="mood" value="2">⭐⭐
-        <input type="radio" name="mood" value="3">⭐⭐⭐
-        <input type="radio" name="mood" value="4">⭐⭐⭐⭐
-        <input type="radio" name="mood" value="5" checked>⭐⭐⭐⭐⭐
-    </div>
-
-    <label>Capek?</label>
-    <select id="capek">
-        <option>🧘 Santai</option>
-        <option>😮‍💨 Lumayan</option>
-        <option>🥵 Capek banget</option>
-    </select>
-
-    <label>Paling butuh</label>
-    <select id="butuh">
-        <option>☕ Kopi</option>
-        <option>🛌 Tidur</option>
-        <option>🎧 Musik</option>
-        <option>🏖️ Liburan</option>
-        <option>💰 Gajian</option>
-    </select>
-
-    <label>Curhat</label>
-    <textarea id="curhat" rows="3"></textarea>
-
-    <!-- 🔥 WAJIB type="button" -->
-    <button type="button" onclick="kirim()">Kirim Survei</button>
-
-    <div id="hasil"></div>
-
-    <button type="button" class="admin-btn" onclick="bukaAdmin()">🔐 Admin</button>
-
-    <table id="tabelAdmin">
-        <thead>
-            <tr>
-                <th>Nama</th>
-                <th>Mood</th>
-                <th>Capek</th>
-                <th>Butuh</th>
-                <th>Curhat</th>
-            </tr>
-        </thead>
-        <tbody id="dataAdmin"></tbody>
-    </table>
-</div>
-
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytksPqs30TK6ltChrLbSVaaxxokKy9SBuRtcZB0kNGNVR5RkZkq6XDBuELFB8MWwuUYw/exec";
-let data = JSON.parse(localStorage.getItem("survei")) || [];
-
-function kirim() {
-    let nama = document.getElementById("nama").value.trim();
-    let moodEl = document.querySelector('input[name="mood"]:checked');
-    let capek = document.getElementById("capek").value;
-    let butuh = document.getElementById("butuh").value;
-    let curhat = document.getElementById("curhat").value || "-";
-
-    if (!nama || !moodEl) {
-        alert("Nama dan mood wajib diisi");
-        return;
-    }
-
-    let mood = moodEl.value;
-
-    // ✅ kirim ke Google Spreadsheet
-    let fd = new FormData();
-    fd.append("nama", nama);
-    fd.append("mood", mood);
-    fd.append("capek", capek);
-    fd.append("butuh", butuh);
-    fd.append("curhat", curhat);
-
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        body: fd
-    })
-    .then(() => {
-        document.getElementById("hasil").innerText = "✅ Terima kasih, survei terkirim!";
-        document.getElementById("hasil").style.display = "block";
-    })
-    .catch(() => alert("❌ Gagal kirim survei"));
-
-    // ✅ simpan lokal (admin)
-    data.push({ nama, mood, capek, butuh, curhat });
-    localStorage.setItem("survei", JSON.stringify(data));
-
-    document.getElementById("nama").value = "";
-    document.getElementById("curhat").value = "";
-}
-
-function bukaAdmin() {
-    let pass = prompt("Password admin:");
-    if (pass !== "admin123") {
-        alert("Password salah");
-        return;
-    }
-
-    let tbody = document.getElementById("dataAdmin");
-    tbody.innerHTML = "";
-
-    data.forEach(d => {
-        tbody.innerHTML += `
-        <tr>
-            <td>${d.nama}</td>
-            <td>${d.mood}</td>
-            <td>${d.capek}</td>
-            <td>${d.butuh}</td>
-            <td>${d.curhat}</td>
-        </tr>`;
-    });
-
-    document.getElementById("tabelAdmin").style.display = "table";
-}
-</script>
-
+  <div class="box">
+    <h2>✅ HALAMAN MUNCUL</h2>
+    <p>Kalau ini kelihatan, berarti GitHub Pages normal.</p>
+  </div>
 </body>
 </html>
