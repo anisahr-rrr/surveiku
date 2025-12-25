@@ -104,7 +104,6 @@ th { background:#eee; }
   <label>Curhat</label>
   <textarea id="curhat" rows="3"></textarea>
 
-  <!-- 🔥 WAJIB -->
   <button type="button" onclick="kirim()">Kirim Survei</button>
 
   <div id="hasil"></div>
@@ -126,7 +125,7 @@ th { background:#eee; }
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytksPqs30TK6ltChrLbSVaaxxokKy9SBuRtcZB0kNGNVR5RkZkq6XDBuELFB8MWwuUYw/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxxxxxxx/exec"; // Ganti dengan URL Web App kamu
 let data = JSON.parse(localStorage.getItem("survei")) || [];
 
 function kirim() {
@@ -143,7 +142,21 @@ function kirim() {
 
   let mood = moodEl.value;
 
-  // kirim ke spreadsheet
+  // --- buat saran / kata penyemangat ---
+  let saran = "";
+  if (mood >= 4) saran = "✨ Mood kamu lagi bagus! Tetap jaga energi positifnya ya.";
+  else if (mood == 3) saran = "🌱 Mood kamu cukup stabil. Pelan-pelan tapi tetap semangat.";
+  else saran = "💙 Sepertinya kamu lagi capek. Jangan lupa istirahat dan jaga diri.";
+
+  if (butuh.includes("Kopi")) saran += " ☕ Kopi boleh, air putih jangan lupa.";
+  if (butuh.includes("Tidur")) saran += " 💤 Tidur cukup itu self-care.";
+  if (butuh.includes("Liburan")) saran += " 🏖️ Liburan kecil juga bisa dari hal sederhana.";
+  if (butuh.includes("Gajian")) saran += " 💰 Semoga rezekimu lancar 😄";
+
+  document.getElementById("hasil").innerText = saran;
+  document.getElementById("hasil").style.display = "block";
+
+  // --- kirim ke spreadsheet ---
   let fd = new FormData();
   fd.append("nama", nama);
   fd.append("mood", mood);
@@ -152,14 +165,9 @@ function kirim() {
   fd.append("curhat", curhat);
 
   fetch(SCRIPT_URL, { method:"POST", body:fd })
-    .then(() => {
-      document.getElementById("hasil").innerText =
-        "✅ Terima kasih, survei terkirim!";
-      document.getElementById("hasil").style.display = "block";
-    })
     .catch(() => alert("❌ Gagal kirim"));
 
-  // simpan lokal admin
+  // --- simpan lokal untuk admin ---
   data.push({ nama, mood, capek, butuh, curhat });
   localStorage.setItem("survei", JSON.stringify(data));
 
@@ -190,4 +198,3 @@ function bukaAdmin() {
 
 </body>
 </html>
-
