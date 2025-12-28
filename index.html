@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Survei Mood</title>
-
 <style>
 body{
   margin:0;
@@ -22,11 +21,7 @@ body{
   max-width:420px;
   box-shadow:0 10px 25px rgba(0,0,0,.2);
 }
-label{
-  display:block;
-  margin-top:12px;
-  font-weight:bold;
-}
+label{display:block;margin-top:12px;font-weight:bold;}
 input,select,textarea{
   width:100%;
   padding:8px;
@@ -43,17 +38,15 @@ button{
   background:#5c8fd6;
   color:#fff;
   font-size:15px;
-  cursor:pointer;
 }
-button:hover{background:#4a7fc5;}
 #hasil{
   display:none;
   margin-top:15px;
   padding:12px;
   background:#f1f7fb;
   border-radius:8px;
-  font-weight:bold;
   white-space:pre-line;
+  font-weight:bold;
 }
 </style>
 </head>
@@ -65,7 +58,7 @@ button:hover{background:#4a7fc5;}
   <label>Nama</label>
   <input id="nama">
 
-  <label>Mood hari ini</label>
+  <label>Mood</label>
   <select id="mood">
     <option value="5">⭐⭐⭐⭐⭐</option>
     <option value="4">⭐⭐⭐⭐</option>
@@ -76,86 +69,63 @@ button:hover{background:#4a7fc5;}
 
   <label>Capek?</label>
   <select id="capek">
-    <option>🧘 Santai</option>
-    <option>😮‍💨 Lumayan</option>
-    <option>🥵 Capek banget</option>
+    <option>Santai</option>
+    <option>Lumayan</option>
+    <option>Capek banget</option>
   </select>
 
-  <label>Paling butuh</label>
+  <label>Butuh</label>
   <select id="butuh">
-    <option>☕ Kopi</option>
-    <option>🛌 Tidur</option>
-    <option>🎧 Musik</option>
-    <option>🏖️ Liburan</option>
-    <option>💰 Gajian</option>
+    <option>Kopi</option>
+    <option>Tidur</option>
+    <option>Liburan</option>
+    <option>Gajian</option>
   </select>
 
   <label>Curhat</label>
-  <textarea id="curhat" rows="3"></textarea>
+  <textarea id="curhat"></textarea>
 
-  <button onclick="kirim()">Kirim Survei</button>
-
+  <button onclick="kirim()">Kirim</button>
   <div id="hasil"></div>
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKQm_RIBLRoeb2Atnozp6sV-c4l1qiNw5djjDhUgF2-vILt84Cv03ijoTYcI2p5T2d/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMG2V5pJyMfiOF3xTI3yFmrC59hfAMBqHrLm3Zd3pla_ZB3Nj9Pa37r26W1Rj84FQk/exec";
 
 function kirim(){
   const nama = document.getElementById("nama").value.trim();
-  if(!nama){
-    alert("Nama wajib diisi");
-    return;
-  }
+  if(!nama) return alert("Nama wajib diisi");
 
-  const mood = Number(document.getElementById("mood").value);
+  const mood = document.getElementById("mood").value;
   const capek = document.getElementById("capek").value;
   const butuh = document.getElementById("butuh").value;
   const curhat = document.getElementById("curhat").value || "-";
 
-  /* ================= KESIMPULAN / SARAN ================= */
   let saran = "";
+  if(mood >= 4) saran = "✨ Mood kamu bagus, pertahankan ya!";
+  else if(mood == 3) saran = "🌱 Mood cukup stabil, tetap semangat.";
+  else saran = "💙 Jangan lupa istirahat dan jaga diri.";
 
-  if(mood >= 4){
-    saran = "✨ Mood kamu lagi bagus!\nPertahankan energi positifnya ya.";
-  }else if(mood === 3){
-    saran = "🌱 Mood kamu cukup stabil.\nPelan-pelan tapi tetap semangat.";
-  }else{
-    saran = "💙 Sepertinya kamu lagi capek.\nJangan lupa istirahat dan jaga diri.";
-  }
+  const url =
+    SCRIPT_URL +
+    "?nama=" + encodeURIComponent(nama) +
+    "&mood=" + mood +
+    "&capek=" + encodeURIComponent(capek) +
+    "&butuh=" + encodeURIComponent(butuh) +
+    "&curhat=" + encodeURIComponent(curhat);
 
-  if(butuh.includes("Kopi")) saran += "\n☕ Kopi boleh, air putih jangan lupa.";
-  if(butuh.includes("Tidur")) saran += "\n💤 Tidur cukup itu self-care.";
-  if(butuh.includes("Musik")) saran += "\n🎧 Musik bisa bantu nenangin pikiran.";
-  if(butuh.includes("Liburan")) saran += "\n🏖️ Liburan kecil juga bisa menyegarkan.";
-  if(butuh.includes("Gajian")) saran += "\n💰 Semoga rezekimu lancar 😄";
-
-  /* ================= KIRIM KE SPREADSHEET ================= */
-  let fd = new FormData();
-  fd.append("nama", nama);
-  fd.append("mood", mood);
-  fd.append("capek", capek);
-  fd.append("butuh", butuh);
-  fd.append("curhat", curhat);
-
-  fetch(SCRIPT_URL,{
-    method:"POST",
-    body:fd
-  })
-  .then(res => res.text())
-  .then(text => {
-    if(text === "OK"){
-      const hasil = document.getElementById("hasil");
-      hasil.innerText = "✅ Terima kasih, survei terkirim!\n\n" + saran;
-      hasil.style.display = "block";
-    }else{
-      alert("❌ Gagal kirim");
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert("❌ Gagal kirim");
-  });
+  fetch(url)
+    .then(r => r.text())
+    .then(t => {
+      if(t === "OK"){
+        const hasil = document.getElementById("hasil");
+        hasil.innerText = "✅ Survei terkirim!\n\n" + saran;
+        hasil.style.display = "block";
+      }else{
+        alert("❌ Gagal kirim");
+      }
+    })
+    .catch(() => alert("❌ Gagal kirim"));
 }
 </script>
 </body>
