@@ -108,17 +108,39 @@ function kirim(){
     method:"POST",
     body:fd
   })
-  .then(r=>r.text())
-  .then(t=>{
-    if(t==="OK"){
-      document.getElementById("hasil").innerText="✅ Terima kasih, survei terkirim!";
-      document.getElementById("hasil").style.display="block";
-    }else{
-      alert("❌ Gagal kirim");
+    .then(t=>{
+  if(t==="OK"){
+    const mood = document.getElementById("mood").value;
+    const butuh = document.getElementById("butuh").value;
+
+    let saran = "";
+
+    if(mood >= 4){
+      saran = "✨ Mood kamu lagi bagus! Pertahankan ya energi positifnya.";
+    } else if(mood == 3){
+      saran = "🌱 Mood kamu cukup stabil. Pelan-pelan tapi tetap semangat.";
+    } else {
+      saran = "💙 Sepertinya kamu lagi capek. Jangan lupa istirahat dan jaga diri.";
     }
-  })
+
+    if(butuh === "Kopi") saran += " ☕ Kopi boleh, air putih jangan lupa.";
+    if(butuh === "Tidur") saran += " 💤 Tidur cukup itu penting.";
+    if(butuh === "Liburan") saran += " 🏖️ Liburan kecil juga bisa menyegarkan.";
+    if(butuh === "Gajian") saran += " 💰 Semoga rezekimu lancar 😄";
+
+    const hasil = document.getElementById("hasil");
+    hasil.innerText = "✅ Survei terkirim!\n\n" + saran;
+    hasil.style.display = "block";
+  } else {
+    alert("❌ Gagal kirim");
+  }
+})
+
+
+    
   .catch(()=>alert("❌ Gagal kirim"));
 }
 </script>
 </body>
 </html>
+
