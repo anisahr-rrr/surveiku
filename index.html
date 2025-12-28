@@ -3,47 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <title>Survei Mood</title>
-
 <style>
-body {
-  margin: 0;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-  font-family: Arial, sans-serif;
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#e3f2fd,#bbdefb);
+  font-family:Arial,sans-serif;
 }
-.box {
-  background: #fff;
-  padding: 25px;
-  border-radius: 14px;
-  width: 100%;
-  max-width: 420px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.2);
+.box{
+  background:#fff;
+  padding:25px;
+  border-radius:14px;
+  width:100%;
+  max-width:420px;
+  box-shadow:0 10px 25px rgba(0,0,0,.2);
 }
-label { display:block; margin-top:12px; font-weight:bold; }
-input, select, textarea {
-  width: 100%;
-  padding: 8px;
-  margin-top: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+label{display:block;margin-top:12px;font-weight:bold;}
+input,select,textarea{
+  width:100%;
+  padding:8px;
+  margin-top:6px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
-.rating { margin-top: 8px; }
-button {
-  width: 100%;
-  margin-top: 16px;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #5c8fd6;
-  color: #fff;
-  font-size: 15px;
-  cursor: pointer;
+button{
+  width:100%;
+  margin-top:16px;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#5c8fd6;
+  color:#fff;
+  font-size:15px;
+  cursor:pointer;
 }
-button:hover { background:#4a7fc5; }
-#hasil {
+#hasil{
   display:none;
   margin-top:15px;
   padding:12px;
@@ -51,167 +48,77 @@ button:hover { background:#4a7fc5; }
   border-radius:8px;
   font-weight:bold;
 }
-.admin-btn { background:#607d8b; }
-table {
-  display:none;
-  width:100%;
-  margin-top:15px;
-  border-collapse:collapse;
-  font-size:13px;
-}
-th, td {
-  border:1px solid #ccc;
-  padding:6px;
-  text-align:center;
-}
-th { background:#eee; }
 </style>
 </head>
 
 <body>
-
 <div class="box">
   <h2 style="text-align:center;">📝 Survei Mood</h2>
 
   <label>Nama</label>
-  <input type="text" id="nama">
+  <input id="nama">
 
-  <label>Mood hari ini</label>
-  <div class="rating">
-    <input type="radio" name="mood" value="1">⭐
-    <input type="radio" name="mood" value="2">⭐⭐
-    <input type="radio" name="mood" value="3">⭐⭐⭐
-    <input type="radio" name="mood" value="4">⭐⭐⭐⭐
-    <input type="radio" name="mood" value="5" checked>⭐⭐⭐⭐⭐
-  </div>
+  <label>Mood</label>
+  <select id="mood">
+    <option value="5">⭐⭐⭐⭐⭐</option>
+    <option value="4">⭐⭐⭐⭐</option>
+    <option value="3">⭐⭐⭐</option>
+    <option value="2">⭐⭐</option>
+    <option value="1">⭐</option>
+  </select>
 
   <label>Capek?</label>
   <select id="capek">
-    <option>🧘 Santai</option>
-    <option>😮‍💨 Lumayan</option>
-    <option>🥵 Capek banget</option>
+    <option>Santai</option>
+    <option>Lumayan</option>
+    <option>Capek banget</option>
   </select>
 
   <label>Paling butuh</label>
   <select id="butuh">
-    <option>☕ Kopi</option>
-    <option>🛌 Tidur</option>
-    <option>🎧 Musik</option>
-    <option>🏖️ Liburan</option>
-    <option>💰 Gajian</option>
+    <option>Kopi</option>
+    <option>Tidur</option>
+    <option>Liburan</option>
+    <option>Gajian</option>
   </select>
 
   <label>Curhat</label>
-  <textarea id="curhat" rows="3"></textarea>
+  <textarea id="curhat"></textarea>
 
-  <button type="button" onclick="kirim()">Kirim Survei</button>
+  <button onclick="kirim()">Kirim</button>
 
   <div id="hasil"></div>
-
-  <button type="button" class="admin-btn" onclick="bukaAdmin()">🔐 Admin</button>
-
-  <table id="tabelAdmin">
-    <thead>
-      <tr>
-        <th>Nama</th>
-        <th>Mood</th>
-        <th>Capek</th>
-        <th>Butuh</th>
-        <th>Curhat</th>
-      </tr>
-    </thead>
-    <tbody id="dataAdmin"></tbody>
-  </table>
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvpc1TbWqIhi_i3AgKm5OAv0cR7tHhXxJ7_mBS5-F8POIIdZksJzkCgvW9GHHrfocv/exec"; 
-let data = JSON.parse(localStorage.getItem("survei")) || [];
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKQm_RIBLRoeb2Atnozp6sV-c4l1qiNw5djjDhUgF2-vILt84Cv03ijoTYcI2p5T2d/exec";
 
-function kirim() {
-  let nama = document.getElementById("nama").value.trim();
-  let moodEl = document.querySelector('input[name="mood"]:checked');
-  let capek = document.getElementById("capek").value;
-  let butuh = document.getElementById("butuh").value;
-  let curhat = document.getElementById("curhat").value || "-";
+function kirim(){
+  const nama = document.getElementById("nama").value.trim();
+  if(!nama) return alert("Nama wajib diisi");
 
-  if (!nama || !moodEl) {
-    alert("Nama dan mood wajib diisi");
-    return;
-  }
-
-  let mood = moodEl.value;
-
-  // --- buat saran / kata penyemangat ---
-  let saran = "";
-  if (mood >= 4) saran = "✨ Mood kamu lagi bagus! Tetap jaga energi positifnya ya.";
-  else if (mood == 3) saran = "🌱 Mood kamu cukup stabil. Pelan-pelan tapi tetap semangat.";
-  else saran = "💙 Sepertinya kamu lagi capek. Jangan lupa istirahat dan jaga diri.";
-
-  if (butuh.includes("Kopi")) saran += " ☕ Kopi boleh, air putih jangan lupa.";
-  if (butuh.includes("Tidur")) saran += " 💤 Tidur cukup itu self-care.";
-  if (butuh.includes("Liburan")) saran += " 🏖️ Liburan kecil juga bisa dari hal sederhana.";
-  if (butuh.includes("Gajian")) saran += " 💰 Semoga rezekimu lancar 😄";
-
-  document.getElementById("hasil").innerText = saran;
-  document.getElementById("hasil").style.display = "block";
-
-  // --- kirim ke spreadsheet ---
   let fd = new FormData();
   fd.append("nama", nama);
-  fd.append("mood", mood);
-  fd.append("capek", capek);
-  fd.append("butuh", butuh);
-  fd.append("curhat", curhat);
+  fd.append("mood", document.getElementById("mood").value);
+  fd.append("capek", document.getElementById("capek").value);
+  fd.append("butuh", document.getElementById("butuh").value);
+  fd.append("curhat", document.getElementById("curhat").value);
 
-  fetch(SCRIPT_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    nama: nama,
-    mood: mood,
-    capek: capek,
-    butuh: butuh,
-    curhat: curhat
-    })
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    body:fd
   })
-  .then(response => response.text())
-.then(text => {
-  if(text !== "OK") alert("❌ Gagal kirim");
-})
-.catch(() => alert("❌ Gagal kirim"));
-
-
-  // --- simpan lokal untuk admin ---
-  data.push({ nama, mood, capek, butuh, curhat });
-  localStorage.setItem("survei", JSON.stringify(data));
-
-  document.getElementById("nama").value = "";
-  document.getElementById("curhat").value = "";
-}
-
-function bukaAdmin() {
-  let pass = prompt("Password admin:");
-  if (pass !== "admin123") return alert("Password salah");
-
-  let tbody = document.getElementById("dataAdmin");
-  tbody.innerHTML = "";
-  data.forEach(d => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${d.nama}</td>
-        <td>${d.mood}</td>
-        <td>${d.capek}</td>
-        <td>${d.butuh}</td>
-        <td>${d.curhat}</td>
-      </tr>`;
-  });
-
-  document.getElementById("tabelAdmin").style.display = "table";
+  .then(r=>r.text())
+  .then(t=>{
+    if(t==="OK"){
+      document.getElementById("hasil").innerText="✅ Terima kasih, survei terkirim!";
+      document.getElementById("hasil").style.display="block";
+    }else{
+      alert("❌ Gagal kirim");
+    }
+  })
+  .catch(()=>alert("❌ Gagal kirim"));
 }
 </script>
-
 </body>
 </html>
-
-
